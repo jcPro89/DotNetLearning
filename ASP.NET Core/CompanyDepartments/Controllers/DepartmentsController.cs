@@ -1,7 +1,6 @@
 ﻿using CompanyDepartments.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.CompilerServices;
 
 namespace CompanyDepartments.Controllers
 {
@@ -9,23 +8,27 @@ namespace CompanyDepartments.Controllers
     {
 
         private readonly CompanyDepartmentsContext _dbcontext;
-        private readonly IConfiguration _configuration;
 
-        public DepartmentsController(CompanyDepartmentsContext context, IConfiguration configuration)
+        public DepartmentsController(CompanyDepartmentsContext context)
         {
             _dbcontext = context;
-            _configuration = configuration;
         }
 
-        public IActionResult Index(){
+        public IActionResult Index()
+        {
             List<Department> departments = _dbcontext.Departments.Include(e => e.Employees).ToList();
             return View(departments);
         }
 
+        [HttpGet]
         public IActionResult Create()
         {
-            Department department = new Department();
-            department.Employees.Add(new Employee() { EmployeeId = 1});
+            Department department = new()
+            {
+                NumberOfEmployees = 1
+            };
+
+            department.Employees.Add(new Employee());
             return PartialView("_AddDepartmentPartialView", department);
         }
 
